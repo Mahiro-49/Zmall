@@ -44,8 +44,5 @@ const router = new VueRouter({
     mode: 'history'
 })
 
-// const routerPush = VueRouter.prototype.pushVueRouter.prototype.push = function push(location) {
-//         return routerPush.call(this, location).catch(error => error)
-//     }
 // 3.导出路由
 export default router
