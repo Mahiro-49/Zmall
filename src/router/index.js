@@ -12,8 +12,9 @@ const Profile = () =>
     import ('../views/profile/Profile.vue')
 const Category = () =>
     import ('../views/category/Category.vue')
-
-// 1.安装插件
+const Detail = () =>
+    import ('../views/detail/Detail.vue')
+    // 1.安装插件
 Vue.use(VueRouter)
 
 // 2.创建路由对象
@@ -36,6 +37,11 @@ const routes = [{
     {
         path: '/profile',
         component: Profile
+    },
+    {
+        // 动态路由需要加/:iid
+        path: '/detail/:iid',
+        component: Detail
     }
 ]
 
