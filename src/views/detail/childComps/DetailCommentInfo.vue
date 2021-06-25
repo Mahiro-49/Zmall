@@ -25,11 +25,25 @@
 </template>
 
 <script>
+import {formatDate} from "../../../common/utils"
+
 export default {
   name: "DetailCommentInfo",
   props: {
     commentInfo: {
-      type: Object
+      type: Object,
+      default() {
+        return {}
+      }
+    }
+  },
+  filters: {
+    showDate(value) {
+      // 1.将时间戳转成Date对象
+      const data = new Date(value * 1000)
+
+      // 2.将date进行格式化
+      return formatDate(data, 'yyyy-MM-dd')
     }
   }
 }
