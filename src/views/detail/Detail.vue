@@ -8,6 +8,8 @@
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"></detail-goods-info>
       <detail-param-info :param-info="paramInfo"></detail-param-info>
       <detail-comment-info :comment-info="commentInfo"></detail-comment-info>
+      <goods-list :goods="recommends"></goods-list>
+      <good
     </scroll>
   </div>
 </template>
@@ -22,8 +24,9 @@ import DetailParamInfo from "./childComps/DetailParamInfo.vue"
 import DetailCommentInfo from "./childComps/DetailCommentInfo.vue"
 
 import Scroll from "components/common/scroll/Scroll.vue"
+import GoodsList from "components/content/goods/GoodsList.vue"
 
-import {getDetail, Goods, Shop, GoodsParam} from "network/detail.js"
+import {getDetail, Goods, Shop, GoodsParam, getRecommend} from "network/detail.js"
 export default {
   name: "Detail",
   components: {
@@ -36,7 +39,9 @@ export default {
     DetailCommentInfo,
 
     Scroll,
+    GoodsList
   },
+
   data() {
     return {
       iid: null,
@@ -47,6 +52,7 @@ export default {
       detailInfo: {},
       paramInfo: {},
       commentInfo: {},
+      recommends: [],
     }
   },
   created() {
@@ -59,34 +65,35 @@ export default {
       // 1.获取顶部轮播数据
       this.topImages = res.data.result.itemInfo.topImages
 
-    // 3.获取商品信息
-    this.goods = new Goods(data.itemInfo, data.columns, data.shopInfo.services)
+      // 3.获取商品信息
+      this.goods = new Goods(data.itemInfo, data.columns, data.shopInfo.services)
     
-    // 4.创建店铺信息对象
-    this.shop = new Shop(data.shopInfo)
+      // 4.创建店铺信息对象
+      this.shop = new Shop(data.shopInfo)
 
-    // 5.获取商品详细信息
-    this.detailInfo = data.detailInfo 
+      // 5.获取商品详细信息
+      this.detailInfo = data.detailInfo 
 
-    // 6.获取参数信息
-    this.paramInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule)
+      // 6.获取参数信息
+      this.paramInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule)
 
-    // 7.获取出评论的信息
-    console.log(data);
-    if (data.rate.cRate !== 0) {
-      this.commentInfo = data.rate.list[0]
-    }
+      // 7.获取出评论的信息
+      if (data.rate.cRate !== 0) {
+        this.commentInfo = data.rate.list[0]
+      }
+    }),
+    // 3. 请求推荐数据
+    getRecommend().then(res => {
+      this.recommends = res.data.data.list
     })
-
-
   },
   methods: {
     imageLoad() {
       this.$$refs.scroll.refresh()
     }
   }
-  
 }
+  
 </script>
 
 <style scoped>
