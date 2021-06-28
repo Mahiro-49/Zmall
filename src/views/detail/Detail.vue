@@ -1,16 +1,16 @@
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav"></detail-nav-bar>
-    <scroll class="content" ref="scroll">
+    <detail-nav-bar class="detail-nav" @clickItem="clickItem" ref="nav"></detail-nav-bar>
+    <scroll class="content" ref="scroll" @scroll="contentScroll" :probeType="3">
       <detail-swiper :top-images="topImages"></detail-swiper>
       <detail-base-info :goods="goods" ></detail-base-info>
       <detail-shop-info :shop="shop"></detail-shop-info>
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"></detail-goods-info>
-      <detail-param-info :param-info="paramInfo"></detail-param-info>
-      <detail-comment-info :comment-info="commentInfo"></detail-comment-info>
-      <goods-list :goods="recommends"></goods-list>
-      <good
+      <detail-param-info :param-info="paramInfo" ref="param"></detail-param-info>
+      <detail-comment-info :comment-info="commentInfo" ref="comment"></detail-comment-info>
+      <goods-list :goods="recommends" ref="recommend"></goods-list>
     </scroll>
+    <detail-bottom-bar></detail-bottom-bar>
   </div>
 </template>
 
@@ -22,11 +22,14 @@ import DetailShopInfo from "./childComps/DetailShopInfo.vue"
 import DetailGoodsInfo from "./childComps/DetailGoodsInfo.vue"
 import DetailParamInfo from "./childComps/DetailParamInfo.vue"
 import DetailCommentInfo from "./childComps/DetailCommentInfo.vue"
+import DetailBottomBar from "./childComps/DetailBottomBar.vue"
 
 import Scroll from "components/common/scroll/Scroll.vue"
 import GoodsList from "components/content/goods/GoodsList.vue"
 
 import {getDetail, Goods, Shop, GoodsParam, getRecommend} from "network/detail.js"
+import {itemListenerMixin} from '../../common/mixin.js'
+
 export default {
   name: "Detail",
   components: {
@@ -37,10 +40,12 @@ export default {
     DetailGoodsInfo,
     DetailParamInfo,
     DetailCommentInfo,
+    DetailBottomBar,
 
     Scroll,
     GoodsList
   },
+  mixins: [itemListenerMixin],
 
   data() {
     return {
@@ -53,6 +58,8 @@ export default {
       paramInfo: {},
       commentInfo: {},
       recommends: [],
+      theThemeTopY: [],
+      currentIndex: 0
     }
   },
   created() {
@@ -81,17 +88,43 @@ export default {
       if (data.rate.cRate !== 0) {
         this.commentInfo = data.rate.list[0]
       }
+
     }),
+    
     // 3. 请求推荐数据
     getRecommend().then(res => {
       this.recommends = res.data.data.list
-    })
+    });
   },
   methods: {
     imageLoad() {
-      this.$$refs.scroll.refresh()
+      this.$refs.scroll.refresh();
+      
+    },
+    clickItem(index) {
+      this.$refs.scroll.scrollTo(0, -this.theThemeTopY[index], 100);
+      
+    },
+    contentScroll(position) {
+      this.theThemeTopY = []
+      this.theThemeTopY.push(0);
+      this.theThemeTopY.push(this.$refs.param.$el.offsetTop);
+      this.theThemeTopY.push(this.$refs.comment.$el.offsetTop);
+      this.theThemeTopY.push(this.$refs.recommend.$el.offsetTop);
+      // 内容滚动 显示正确的标题
+      const positionY = -position.y;
+      let length = this.theThemeTopY.length;
+      for(let i = 0; i < length; i++) {
+        if (this.currentIndex !== i && ((i < length - 1 && positionY >= this.theThemeTopY[i] && positionY < this.theThemeTopY[i+1]) || (i === length - 1 && positionY > this.theThemeTopY[i]))) {
+          this.currentIndex = i;
+          this.$refs.nav.currentIndex = this.currentIndex
+        }
+      }
     }
-  }
+    
+
+  },
+  
 }
   
 </script>
@@ -105,7 +138,7 @@ export default {
 }
 
 .content {
-  height: calc(100% - 44px);
+  height: calc(100% - 44px - 49px);
 }
 
 .detail-nav {

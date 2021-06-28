@@ -27,7 +27,8 @@ export default {
   },
   methods: {
     clickItem(index) {
-      this.currentIndex = index
+      this.currentIndex = index;
+      this.$emit('clickItem', index);
     },
     clickBack() {
       // 返回上一级

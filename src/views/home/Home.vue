@@ -29,7 +29,8 @@ import Scroll from 'components/common/scroll/Scroll.vue'
 import BackTop from 'components/content/backTop/BackTop.vue'
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
-import { debounce } from "../../common/utils"
+import {debounce} from "../../common/utils"
+import { itemListenerMixin } from "../../common/mixin"
 
 export default {
   name: "Home",
@@ -43,6 +44,7 @@ export default {
     Scroll,
     BackTop,
   },
+  mixins: [itemListenerMixin],
   data() {
     return {
       // 保存数据使用的
@@ -73,16 +75,6 @@ export default {
     this.getHomeGoods('pop')
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
-  },
-  mounted() {
-    // 1.图片加载完成的事件监听
-    const refresh = debounce(this.$refs.scroll.refresh, 200)
-    this.$bus.$on('itemImageLoad', () => {
-      refresh();
-    });
-  },
-  destroyed() {
-    console.log("home dest");
   },
   activated() {
     // 设置时间后不会有返回原来位置后置顶的效果
