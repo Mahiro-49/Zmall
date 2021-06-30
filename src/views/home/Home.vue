@@ -29,7 +29,6 @@ import Scroll from 'components/common/scroll/Scroll.vue'
 import BackTop from 'components/content/backTop/BackTop.vue'
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
-import {debounce} from "../../common/utils"
 import { itemListenerMixin } from "../../common/mixin"
 
 export default {

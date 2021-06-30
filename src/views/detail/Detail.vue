@@ -10,7 +10,8 @@
       <detail-comment-info :comment-info="commentInfo" ref="comment"></detail-comment-info>
       <goods-list :goods="recommends" ref="recommend"></goods-list>
     </scroll>
-    <detail-bottom-bar></detail-bottom-bar>
+    <detail-bottom-bar @shopClick="shopClick"></detail-bottom-bar>
+    <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
   </div>
 </template>
 
@@ -28,7 +29,7 @@ import Scroll from "components/common/scroll/Scroll.vue"
 import GoodsList from "components/content/goods/GoodsList.vue"
 
 import {getDetail, Goods, Shop, GoodsParam, getRecommend} from "network/detail.js"
-import {itemListenerMixin} from '../../common/mixin.js'
+import {itemListenerMixin, backTopMixin} from '../../common/mixin.js'
 
 export default {
   name: "Detail",
@@ -45,7 +46,7 @@ export default {
     Scroll,
     GoodsList
   },
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
 
   data() {
     return {
@@ -95,6 +96,7 @@ export default {
     getRecommend().then(res => {
       this.recommends = res.data.data.list
     });
+
   },
   methods: {
     imageLoad() {
@@ -120,6 +122,17 @@ export default {
           this.$refs.nav.currentIndex = this.currentIndex
         }
       }
+      this.listenShowBackTop(position)
+    },
+    shopClick() {
+      // 添加商品进购物车
+      const product = {};
+      product.image = this.topImages[0];
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.realPrice;
+      product.iid = this.iid;
+      this.$store.dispatch('addCart', product)
     }
     
 
