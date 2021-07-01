@@ -28,7 +28,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .param-info {
     padding: 20px 15px;
     font-size: 14px;

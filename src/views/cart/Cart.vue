@@ -25,7 +25,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 .nav-bar {
   background-color: var(--color-tint);

@@ -41,7 +41,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   #shop-item {
     width: 100%;
     display: flex;

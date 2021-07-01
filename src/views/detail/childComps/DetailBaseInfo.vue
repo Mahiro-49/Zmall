@@ -30,7 +30,7 @@ export default {
 }
 </script>
   
-<style>
+<style scoped>
 .base-info {
   margin-top: 15px;
   padding: 0 8px;

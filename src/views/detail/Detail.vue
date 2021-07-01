@@ -12,6 +12,7 @@
     </scroll>
     <detail-bottom-bar @shopClick="shopClick"></detail-bottom-bar>
     <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
+    <toast :message="message" :show="show"></toast>
   </div>
 </template>
 
@@ -27,6 +28,7 @@ import DetailBottomBar from "./childComps/DetailBottomBar.vue"
 
 import Scroll from "components/common/scroll/Scroll.vue"
 import GoodsList from "components/content/goods/GoodsList.vue"
+import Toast from "components/common/toast/Toast.vue"
 
 import {getDetail, Goods, Shop, GoodsParam, getRecommend} from "network/detail.js"
 import {itemListenerMixin, backTopMixin} from '../../common/mixin.js'
@@ -44,7 +46,8 @@ export default {
     DetailBottomBar,
 
     Scroll,
-    GoodsList
+    GoodsList,
+    Toast
   },
   mixins: [itemListenerMixin, backTopMixin],
 
@@ -60,7 +63,9 @@ export default {
       commentInfo: {},
       recommends: [],
       theThemeTopY: [],
-      currentIndex: 0
+      currentIndex: 0,
+      message: '',
+      show: false
     }
   },
   created() {
@@ -125,14 +130,18 @@ export default {
       this.listenShowBackTop(position)
     },
     shopClick() {
-      // 添加商品进购物车
+      // 1.获取购物车需要展示的信息
       const product = {};
       product.image = this.topImages[0];
       product.title = this.goods.title;
       product.desc = this.goods.desc;
       product.price = this.goods.realPrice;
       product.iid = this.iid;
-      this.$store.dispatch('addCart', product)
+
+      // 2.将商品添加到购物车
+      this.$store.dispatch('addCart', product).then(res => {
+        this.$toast.show(res, 2000)
+      })
     }
     
 

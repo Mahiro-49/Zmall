@@ -32,7 +32,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   .bottom-bar {
     height: 58px;
     position: fixed;
