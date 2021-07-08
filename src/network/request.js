@@ -11,7 +11,7 @@ export function request(config) {
     instance.interceptors.request.use(config => {
         return config
     }, err => {
-
+        return err
     })
 
     // 3.发送真正的网络请求
